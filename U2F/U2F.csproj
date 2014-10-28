@@ -1,0 +1,106 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{D8A7595B-F61A-4A58-9834-364069EC355E}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>U2F</RootNamespace>
+    <AssemblyName>U2F</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="BouncyCastle.Crypto">
+      <HintPath>..\AspNetIdentity_U2F\packages\BouncyCastle.1.7.0\lib\Net40-Client\BouncyCastle.Crypto.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\AspNetIdentity_U2F\packages\Newtonsoft.Json.6.0.6\lib\net40\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Client\IChannelIdProvider.cs" />
+    <Compile Include="Client\ICrypto.cs" />
+    <Compile Include="Client\Impl\CryptoImpl.cs" />
+    <Compile Include="Client\Impl\U2FClientReferenceImpl.cs" />
+    <Compile Include="Client\IOriginVerifier.cs" />
+    <Compile Include="Client\IU2FClient.cs" />
+    <Compile Include="Codec\SerialCodec.cs" />
+    <Compile Include="Codec\ClientDataCodec.cs" />
+    <Compile Include="Codec\RawMessageCodec.cs" />
+    <Compile Include="Helper.cs" />
+    <Compile Include="Key\ECDsaCngCrypto.cs" />
+    <Compile Include="Key\IKeyPairGenerator.cs" />
+    <Compile Include="Key\IKeyHandleGenerator.cs" />
+    <Compile Include="Key\ICrypto.cs" />
+    <Compile Include="Key\IDataStore.cs" />
+    <Compile Include="Key\IU2FKey.cs" />
+    <Compile Include="Key\KeyPair.cs" />
+    <Compile Include="Key\Messages\AuthenticateRequest.cs" />
+    <Compile Include="Key\Messages\AuthenticateResponse.cs" />
+    <Compile Include="Key\Messages\RegisterRequest.cs" />
+    <Compile Include="Key\Messages\RegisterResponse.cs" />
+    <Compile Include="Key\Messages\U2FRequest.cs" />
+    <Compile Include="Key\Messages\U2FResponse.cs" />
+    <Compile Include="Key\U2FKeyReferenceImpl.cs" />
+    <Compile Include="Key\UserPresenceVerifier.cs" />
+    <Compile Include="Server\Impl\U2FServerReferenceImpl.cs" />
+    <Compile Include="Server\Impl\MemoryDataStore.cs" />
+    <Compile Include="Server\ISessionIdGenerator.cs" />
+    <Compile Include="Server\IDataStore.cs" />
+    <Compile Include="Server\Data\EnrollSessionData.cs" />
+    <Compile Include="Server\Data\SecurityKeyData.cs" />
+    <Compile Include="Server\Data\SignSessionData.cs" />
+    <Compile Include="Server\IChallengeGenerator.cs" />
+    <Compile Include="Server\ICrypto.cs" />
+    <Compile Include="Server\Impl\BouncyCastleCrypto.cs" />
+    <Compile Include="Server\IU2FServer.cs" />
+    <Compile Include="Server\Message\RegistrationRequest.cs" />
+    <Compile Include="Server\Message\RegistrationResponse.cs" />
+    <Compile Include="Server\Message\SignRequest.cs" />
+    <Compile Include="Server\Message\SignResponse.cs" />
+    <Compile Include="U2FException.cs" />
+    <Compile Include="U2FConsts.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="U2FTester.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
