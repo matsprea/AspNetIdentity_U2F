@@ -71,6 +71,8 @@
     <Compile Include="Key\Messages\U2FResponse.cs" />
     <Compile Include="Key\U2FKeyReferenceImpl.cs" />
     <Compile Include="Key\UserPresenceVerifier.cs" />
+    <Compile Include="Server\Impl\ChallengeGeneratorImpl.cs" />
+    <Compile Include="Server\Impl\ISessionIdGenerator.cs" />
     <Compile Include="Server\Impl\U2FServerReferenceImpl.cs" />
     <Compile Include="Server\Impl\MemoryDataStore.cs" />
     <Compile Include="Server\ISessionIdGenerator.cs" />

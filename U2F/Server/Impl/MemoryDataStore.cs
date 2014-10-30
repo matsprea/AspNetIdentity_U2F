@@ -15,7 +15,7 @@ namespace U2F.Server.Impl
 
 		public MemoryDataStore(ISessionIdGenerator sessionIdGenerator)
 		{
-			this._sessionIdGenerator = sessionIdGenerator;
+			_sessionIdGenerator = sessionIdGenerator;
 		}
 
 		public String StoreSessionData(EnrollSessionData sessionData)
@@ -32,7 +32,7 @@ namespace U2F.Server.Impl
 
 		public SignSessionData GetSignSessionData(String sessionId)
 		{
-			return (SignSessionData) _sessionDataBase[sessionId];
+			return (SignSessionData)GetEnrollSessionData(sessionId);
 		}
 
 		public void AddSecurityKeyData(String accountName, SecurityKeyData securityKeyData)
@@ -44,7 +44,7 @@ namespace U2F.Server.Impl
 
 		public List<SecurityKeyData> GetSecurityKeyData(String accountName)
 		{
-			return _securityKeyDataBase[accountName] ?? new List<SecurityKeyData>();
+			return _securityKeyDataBase.ContainsKey(accountName) ? _securityKeyDataBase[accountName] : new List<SecurityKeyData>();
 		}
 
 		public IList<X509Certificate> GetTrustedCertificates()
