@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 
@@ -53,11 +54,11 @@ namespace U2F.Server.Data
 				return true;
 			if (y == null)
 				return false;
-			if (! x.KeyHandle.Equals(y.KeyHandle))
+			if (!x.KeyHandle.SequenceEqual(y.KeyHandle))
 				return false;
-			if (! x.EnrollmentTime.Equals(y.EnrollmentTime))
+			if (!x.EnrollmentTime.Equals(y.EnrollmentTime))
 				return false;
-			if (! x.PublicKey.Equals(y.PublicKey))
+			if (!x.PublicKey.SequenceEqual(y.PublicKey))
 				return false;
 			if (! x.AttestationCert.Equals(y.AttestationCert))
 				return false;

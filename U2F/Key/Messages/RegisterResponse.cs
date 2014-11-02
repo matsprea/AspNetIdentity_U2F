@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 
 namespace U2F.Key.Messages
@@ -45,11 +46,11 @@ namespace U2F.Key.Messages
 
 			if (!x.AttestationCertificate.Equals(y.AttestationCertificate))
 				return false;
-			if (!x.KeyHandle.Equals(y.KeyHandle))
+			if (!x.KeyHandle.SequenceEqual(y.KeyHandle))
 				return false;
-			if (!x.Signature.Equals(y.Signature))
+			if (!x.Signature.SequenceEqual(y.Signature))
 				return false;
-			if (!x.UserPublicKey.Equals(y.UserPublicKey))
+			if (!x.UserPublicKey.SequenceEqual(y.UserPublicKey))
 				return false;
 			return true;
 		}

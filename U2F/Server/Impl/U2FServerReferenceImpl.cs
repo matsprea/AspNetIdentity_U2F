@@ -187,7 +187,7 @@ namespace U2F.Server.Impl
 
 			foreach (var temp in _dataStore.GetSecurityKeyData(sessionData.AccountName))
 			{
-				if (sessionData.PublicKey.Equals(temp.PublicKey))
+				if (sessionData.PublicKey.SequenceEqual(temp.PublicKey))
 				{
 					securityKeyData = temp;
 					break;
@@ -285,10 +285,10 @@ namespace U2F.Server.Impl
 				VerifyOrigin(browserData.Property(ORIGIN_PARAM).Value.ToString());
 			}
 
-			var challengeFromBrowserData = Convert.FromBase64String(browserData.Property(CHALLENGE_PARAM).Value.ToString());
+			var challengeFromBrowserData = browserData.Property(CHALLENGE_PARAM).Value.ToString().Base64Urldecode();
 
 
-			if (! challengeFromBrowserData.Equals(sessionData.Challenge))
+			if (!challengeFromBrowserData.SequenceEqual(sessionData.Challenge))
 			{
 				throw new U2FException("wrong challenge signed in browserdata");
 			}

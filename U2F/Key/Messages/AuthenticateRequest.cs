@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace U2F.Key.Messages
 {
@@ -46,13 +47,13 @@ namespace U2F.Key.Messages
 				return true;
 			if (y == null)
 				return false;
-			if (!x.ApplicationSha256.Equals(y.ApplicationSha256))
+			if (!x.ApplicationSha256.SequenceEqual(y.ApplicationSha256))
 				return false;
-			if (!x.ChallengeSha256.Equals(y.ChallengeSha256))
+			if (!x.ChallengeSha256.SequenceEqual(y.ChallengeSha256))
 				return false;
 			if (x.Control != y.Control)
 				return false;
-			if (!x.KeyHandle.Equals(y.KeyHandle))
+			if (!x.KeyHandle.SequenceEqual(y.KeyHandle))
 				return false;
 			return true;
 		}

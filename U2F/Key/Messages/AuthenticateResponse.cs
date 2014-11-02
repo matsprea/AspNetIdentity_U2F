@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 
 namespace U2F.Key.Messages
 {
@@ -39,7 +40,7 @@ namespace U2F.Key.Messages
 				return false;
 			if (x.Counter != y.Counter)
 				return false;
-			if (!x.Signature.Equals(y.Signature))
+			if (!x.Signature.SequenceEqual(y.Signature))
 				return false;
 			if (x.UserPresence != y.UserPresence)
 				return false;
