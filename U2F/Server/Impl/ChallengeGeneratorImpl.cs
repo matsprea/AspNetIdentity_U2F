@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Text;
+using System.Web;
 using Org.BouncyCastle.Security;
 
 namespace U2F.Server.Impl

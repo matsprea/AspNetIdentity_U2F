@@ -101,17 +101,17 @@ namespace U2F.Codec
 				{
 					var reservedByte = inputStream.ReadByte();
 					var userPublicKey = inputStream.ReadBytes(65);
-					var keyHandle = inputStream.ReadBytes(4);
+					var keyHandleSize = inputStream.ReadByte();
+					var keyHandle = inputStream.ReadBytes(keyHandleSize);
 
-					//TODO: Check!!!
 					var certificatePosition = inputStream.BaseStream.Position;
-					var size = (int)(inputStream.BaseStream.Length - inputStream.BaseStream.Position);
-					var lastpart = Convert.ToBase64String(inputStream.ReadBytes(size));
-					var attestationCertificate = new X509Certificate(GetBytesFromPEM(lastpart, "CERTIFICATE"));
-
+					var size = (int)(inputStream.BaseStream.Length - inputStream.BaseStream.Position);					
+					var bytes = inputStream.ReadBytes(size);
+					var attestationCertificate = new X509Certificate(bytes);
+					
 					inputStream.BaseStream.Position = certificatePosition + attestationCertificate.Export(X509ContentType.Cert).Length;
 					size = (int)(inputStream.BaseStream.Length - inputStream.BaseStream.Position);
-
+				
 					var signature = inputStream.ReadBytes(size);
 
 					if (reservedByte != REGISTRATION_RESERVED_BYTE_VALUE)
@@ -264,22 +264,6 @@ namespace U2F.Codec
 
 			return result;
 
-		}
-
-		private static byte[] GetBytesFromPEM(string pemString, string section)
-		{
-			var header = String.Format("-----BEGIN {0}-----", section);
-			var footer = String.Format("-----END {0}-----", section);
-
-			var start = pemString.IndexOf(header, StringComparison.Ordinal) + header.Length;
-			var end = pemString.IndexOf(footer, start, StringComparison.Ordinal) - start;
-
-			if (start < 0 || end < 0)
-			{
-				return null;
-			}
-
-			return Convert.FromBase64String(pemString.Substring(start, end));
 		}
 	}
 }

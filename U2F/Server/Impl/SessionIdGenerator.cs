@@ -6,7 +6,8 @@ namespace U2F.Server.Impl
 	{
 		public string GenerateSessionId(string accountName)
 		{
-			return Guid.NewGuid().ToString();
+			var generateSessionId = accountName + Guid.NewGuid();
+			return generateSessionId.GetBytes().Base64Urlencode();
 		}
 	}
 }

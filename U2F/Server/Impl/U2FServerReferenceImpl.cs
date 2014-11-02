@@ -72,7 +72,7 @@ namespace U2F.Server.Impl
 			}
 
 			var appId = sessionData.AppId;
-			var browserData = browserDataBase64.Base64Urldecode().GetString();
+			var browserData = System.Text.Encoding.ASCII.GetString(browserDataBase64.Base64Urldecode());
 			var rawRegistrationData = rawRegistrationDataBase64.Base64Urldecode();
 
 			/*
