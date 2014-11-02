@@ -9,9 +9,9 @@ namespace U2F.Server
 	{
 
 		// attestation certs and trust
-		void AddTrustedCertificate(X509Certificate certificate);
+		void AddTrustedCertificate(X509Certificate2 certificate);
 
-		IList<X509Certificate> GetTrustedCertificates();
+		IList<X509Certificate2> GetTrustedCertificates();
 
 
 		// session handling
@@ -20,7 +20,6 @@ namespace U2F.Server
 		SignSessionData GetSignSessionData(String sessionId);
 
 		EnrollSessionData GetEnrollSessionData(String sessionId);
-
 
 		// security key management
 		void AddSecurityKeyData(String accountName, SecurityKeyData securityKeyData);

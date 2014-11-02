@@ -11,14 +11,14 @@ namespace U2F.Server.Data
 		public long EnrollmentTime { get; private set; }
 		public byte[] KeyHandle { get; private set; }
 		public byte[] PublicKey { get; private set; }
-		public X509Certificate AttestationCert { get; set; }
+		public X509Certificate2 AttestationCert { get; set; }
 		public int Counter { get; set; }
 
 		public SecurityKeyData(
 			long enrollmentTime,
 			byte[] keyHandle,
 			byte[] publicKey,
-			X509Certificate attestationCert,
+			X509Certificate2 attestationCert,
 			int counter)
 		{
 			EnrollmentTime = enrollmentTime;

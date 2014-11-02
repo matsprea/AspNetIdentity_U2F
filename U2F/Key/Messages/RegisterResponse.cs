@@ -22,13 +22,13 @@ namespace U2F.Key.Messages
 		/**
 		* This is a X.509 certificate.
 		*/
-		public X509Certificate AttestationCertificate { get; private set; }
+		public X509Certificate2 AttestationCertificate { get; private set; }
 
 		/** This is a ECDSA signature (on P-256) */
 		public byte[] Signature { get; private set; }
 
 		public RegisterResponse(byte[] userPublicKey, byte[] keyHandle,
-			X509Certificate attestationCertificate, byte[] signature)
+			X509Certificate2 attestationCertificate, byte[] signature)
 		{
 
 			UserPublicKey = userPublicKey;

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using U2F.Server.Data;
 
@@ -7,7 +8,7 @@ namespace U2F.Server.Impl
 {
 	public class MemoryDataStore : IDataStore
 	{
-		private readonly IList<X509Certificate> _trustedCertificateDataBase = new List<X509Certificate>();
+		private readonly IList<X509Certificate2> _trustedCertificateDataBase = new List<X509Certificate2>();
 		private readonly Dictionary<string, EnrollSessionData> _sessionDataBase = new Dictionary<string, EnrollSessionData>();
 		private readonly Dictionary<string, List<SecurityKeyData>> _securityKeyDataBase = new Dictionary<string, List<SecurityKeyData>>();
 
@@ -47,12 +48,12 @@ namespace U2F.Server.Impl
 			return _securityKeyDataBase.ContainsKey(accountName) ? _securityKeyDataBase[accountName] : new List<SecurityKeyData>();
 		}
 
-		public IList<X509Certificate> GetTrustedCertificates()
+		public IList<X509Certificate2> GetTrustedCertificates()
 		{
 			return _trustedCertificateDataBase;
 		}
 
-		public void AddTrustedCertificate(X509Certificate certificate)
+		public void AddTrustedCertificate(X509Certificate2 certificate)
 		{
 			_trustedCertificateDataBase.Add(certificate);
 		}
@@ -62,7 +63,7 @@ namespace U2F.Server.Impl
 			var tokens = GetSecurityKeyData(accountName);
 			foreach (var token in tokens)
 			{
-				if (token.PublicKey.Equals(publicKey))
+				if (token.PublicKey.SequenceEqual(publicKey))
 				{
 					tokens.Remove(token);
 					break;
@@ -75,7 +76,7 @@ namespace U2F.Server.Impl
 			var tokens = GetSecurityKeyData(accountName);
 			foreach (var token in tokens)
 			{
-				if (token.PublicKey.Equals(publicKey))
+				if (token.PublicKey.SequenceEqual(publicKey))
 				{
 					token.Counter = newCounterValue;
 					break;

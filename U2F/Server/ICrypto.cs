@@ -6,7 +6,7 @@ namespace U2F.Server
 {
 	public interface ICrypto
 	{
-		bool VerifySignature(X509Certificate attestationCertificate, byte[] signedBytes, byte[] signature);
+		bool VerifySignature(X509Certificate2 attestationCertificate, byte[] signedBytes, byte[] signature);
 
 		bool VerifySignature(CngKey publicKey, byte[] signedBytes, byte[] signature);
 

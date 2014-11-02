@@ -1,22 +1,23 @@
 ﻿using System;
 using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
 using Org.BouncyCastle.Asn1.X9;
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Crypto.Generators;
 using Org.BouncyCastle.Crypto.Parameters;
-using Org.BouncyCastle.Math.EC;
 using Org.BouncyCastle.Security;
-using X509Certificate = System.Security.Cryptography.X509Certificates.X509Certificate;
 
 namespace U2F.Server.Impl
 {
 	public class BouncyCastleCrypto : ICrypto
 	{
+		private const string CurveName = "secp256r1";
 
-		public bool VerifySignature(X509Certificate attestationCertificate, byte[] signedBytes,
-			byte[] signature)
+		public bool VerifySignature(X509Certificate2 attestationCertificate, byte[] signedBytes, byte[] signature)
 		{
-			return VerifySignature(attestationCertificate.GetPublicKey(), signedBytes, signature);
+			var x509 = DotNetUtilities.FromX509Certificate(attestationCertificate);
+
+			return VerifySignature(x509.GetPublicKey(), signedBytes, signature);
 		}
 
 		public bool VerifySignature(AsymmetricKeyParameter publicKey, byte[] signedBytes, byte[] signature)
@@ -60,7 +61,9 @@ namespace U2F.Server.Impl
 
 		public bool VerifySignature(byte[] publicKey, byte[] signedBytes, byte[] signature)
 		{
-			return VerifySignature(CngKey.Import(publicKey, CngKeyBlobFormat.EccPublicBlob), signedBytes, signature);
+			var key = DecodePublicKey(publicKey);
+
+			return VerifySignature(key, signedBytes, signature);
 		}
 
 
@@ -68,12 +71,10 @@ namespace U2F.Server.Impl
 		{
 			try
 			{
-
-				var curve = X962NamedCurves.GetByName("secp256r1");
-				ECPoint point;
+				var curve = X962NamedCurves.GetByName(CurveName);
 				try
 				{
-					point = curve.Curve.DecodePoint(encodedPublicKey);
+					var point = curve.Curve.DecodePoint(encodedPublicKey);
 				}
 				catch (Exception e)
 				{

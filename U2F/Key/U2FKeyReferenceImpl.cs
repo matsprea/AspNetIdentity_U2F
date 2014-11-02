@@ -9,7 +9,7 @@ namespace U2F.Key
 	{
 		//private static final Logger Log = Logger.getLogger(U2FKeyReferenceImpl.class.getName());
 
-		private readonly X509Certificate _vendorCertificate;
+		private readonly X509Certificate2 _vendorCertificate;
 		private readonly CngKey _certificatePrivateKey;
 		private readonly IKeyPairGenerator _keyPairGenerator;
 		private readonly IKeyHandleGenerator _keyHandleGenerator;
@@ -17,7 +17,7 @@ namespace U2F.Key
 		private readonly UserPresenceVerifier _userPresenceVerifier;
 		private readonly ICrypto _crypto;
 
-		public U2FKeyReferenceImpl(X509Certificate vendorCertificate, CngKey certificatePrivateKey,
+		public U2FKeyReferenceImpl(X509Certificate2 vendorCertificate, CngKey certificatePrivateKey,
 			IKeyPairGenerator keyPairGenerator, IKeyHandleGenerator keyHandleGenerator,
 			IDataStore dataStore, UserPresenceVerifier userPresenceVerifier, ICrypto crypto)
 		{

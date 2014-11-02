@@ -107,9 +107,10 @@ namespace U2F.Codec
 					var certificatePosition = inputStream.BaseStream.Position;
 					var size = (int)(inputStream.BaseStream.Length - inputStream.BaseStream.Position);					
 					var bytes = inputStream.ReadBytes(size);
-					var attestationCertificate = new X509Certificate(bytes);
+					var attestationCertificate = new X509Certificate2(bytes);
 					
 					inputStream.BaseStream.Position = certificatePosition + attestationCertificate.Export(X509ContentType.Cert).Length;
+
 					size = (int)(inputStream.BaseStream.Length - inputStream.BaseStream.Position);
 				
 					var signature = inputStream.ReadBytes(size);
