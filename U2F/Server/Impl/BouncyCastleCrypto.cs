@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
+using Org.BouncyCastle.Asn1;
+using Org.BouncyCastle.Asn1.Sec;
 using Org.BouncyCastle.Asn1.X9;
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Crypto.Generators;
@@ -11,7 +13,7 @@ namespace U2F.Server.Impl
 {
 	public class BouncyCastleCrypto : ICrypto
 	{
-		private const string CurveName = "secp256r1";
+		private readonly DerObjectIdentifier _curve = SecObjectIdentifiers.SecP256r1;
 
 		public bool VerifySignature(X509Certificate2 attestationCertificate, byte[] signedBytes, byte[] signature)
 		{
@@ -71,7 +73,7 @@ namespace U2F.Server.Impl
 		{
 			try
 			{
-				var curve = X962NamedCurves.GetByName(CurveName);
+				var curve = X962NamedCurves.GetByOid(_curve);
 				try
 				{
 					var point = curve.Curve.DecodePoint(encodedPublicKey);
