@@ -81,7 +81,7 @@ namespace U2F.Codec
 					case COMMAND_AUTHENTICATE:
 						return RawMessageCodec.DecodeAuthenticateRequest(ParseMessage(read));
 					default:
-						throw new U2FException(String.Format("Unsupported command: {O:d}", command));
+						throw new U2FException(String.Format("Unsupported command: {0:d}", command));
 				}
 
 			}
