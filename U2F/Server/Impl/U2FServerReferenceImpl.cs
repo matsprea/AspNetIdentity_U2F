@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using System.Diagnostics;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -37,7 +38,7 @@ namespace U2F.Server.Impl
 
 		public RegistrationRequest GetRegistrationRequest(String accountName, String appId)
 		{
-			//Log.info(">> getRegistrationRequest " + accountName);
+			Debug.WriteLine(">> getRegistrationRequest " + accountName);
 
 			var challenge = _challengeGenerator.GenerateChallenge(accountName);
 			var sessionData = new EnrollSessionData(accountName, appId, challenge);
@@ -46,11 +47,11 @@ namespace U2F.Server.Impl
 
 			var challengeBase64 = challenge.Base64Urlencode();
 
-			// Log.info("-- Output --");
-			//Log.info("  sessionId: " + sessionId);
-			//Log.info("  challenge: " + challenge.ToHex());
+			Debug.WriteLine("-- Output --");
+			Debug.WriteLine("  sessionId: " + sessionId);
+			Debug.WriteLine("  challenge: " + challenge.ToHex());
 
-			//Log.info("<< getRegistrationRequest " + accountName);
+			Debug.WriteLine("<< getRegistrationRequest " + accountName);
 
 			return new RegistrationRequest(U2FConsts.U2F_V2, challengeBase64, appId, sessionId);
 		}
@@ -58,7 +59,7 @@ namespace U2F.Server.Impl
 		public SecurityKeyData ProcessRegistrationResponse(RegistrationResponse registrationResponse,
 			long currentTimeInMillis)
 		{
-			//Log.info(">> processRegistrationResponse");
+			Debug.WriteLine(">> processRegistrationResponse");
 
 			var sessionId = registrationResponse.SessionId;
 			var browserDataBase64 = registrationResponse.Bd;
@@ -75,14 +76,13 @@ namespace U2F.Server.Impl
 			var browserData = browserDataBase64.Base64Urldecode().GetString();
 			var rawRegistrationData = rawRegistrationDataBase64.Base64Urldecode();
 
-			/*
-			Log.info("-- Input --");
-			Log.info("  sessionId: " + sessionId);
-			Log.info("  challenge: " + Hex.encodeHexString(sessionData.GetChallenge()));
-			Log.info("  accountName: " + sessionData.GetAccountName());
-			Log.info("  browserData: " + browserData);
-			Log.info("  rawRegistrationData: " + Hex.encodeHexString(rawRegistrationData));
-			*/
+			
+			Debug.WriteLine("-- Input --");
+			Debug.WriteLine("  sessionId: " + sessionId);
+			Debug.WriteLine("  challenge: " + sessionData.Challenge.ToHex());
+			Debug.WriteLine("  accountName: " + sessionData.AccountName);
+			Debug.WriteLine("  browserData: " + browserData);
+			Debug.WriteLine("  rawRegistrationData: " + rawRegistrationData.ToHex());
 
 			var registerResponse = RawMessageCodec.DecodeRegisterResponse(rawRegistrationData);
 			var userPublicKey = registerResponse.UserPublicKey;
@@ -90,22 +90,20 @@ namespace U2F.Server.Impl
 			var attestationCertificate = registerResponse.AttestationCertificate;
 			var signature = registerResponse.Signature;
 
-			/*
-			Log.info("-- Parsed rawRegistrationResponse --");
-			Log.info("  userPublicKey: " + Hex.encodeHexString(userPublicKey));
-			Log.info("  keyHandle: " + Hex.encodeHexString(keyHandle));
-			Log.info("  attestationCertificate: " + attestationCertificate.toString());
+			Debug.WriteLine("-- Parsed rawRegistrationResponse --");
+			Debug.WriteLine("  userPublicKey: " + userPublicKey.ToHex());
+			Debug.WriteLine("  keyHandle: " + keyHandle.ToHex());
+			Debug.WriteLine("  attestationCertificate: " + attestationCertificate);
 			try
 			{
-				Log.info("  attestationCertificate bytes: "
-				         + Hex.encodeHexString(attestationCertificate.getEncoded()));
+				Debug.WriteLine("  attestationCertificate bytes: " + attestationCertificate.GetRawCertData().ToHex());
 			}
-			catch (CertificateEncodingException e)
+			catch (Exception e)
 			{
 				throw new U2FException("Cannot encode certificate", e);
 			}
-			Log.info("  signature: " + Hex.encodeHexString(signature));
-			*/
+			Debug.WriteLine("  signature: " + signature.ToHex());
+			
 			var appIdSha256 = _cryto.ComputeSha256(appId.GetBytes());
 			var browserDataSha256 = _cryto.ComputeSha256(browserData.GetBytes());
 			var signedBytes = RawMessageCodec.EncodeRegistrationSignedBytes(appIdSha256, browserDataSha256,
@@ -114,12 +112,12 @@ namespace U2F.Server.Impl
 			var trustedCertificates = _dataStore.GetTrustedCertificates();
 			if (!trustedCertificates.Contains(attestationCertificate))
 			{
-				//Log.warning("attestion cert is not trusted");
+				Debug.WriteLine("attestion cert is not trusted");
 			}
 
 			VerifyBrowserData(browserData, "navigator.id.finishEnrollment", sessionData);
 
-			//Log.info("Verifying signature of bytes " + Hex.encodeHexString(signedBytes));
+			Debug.WriteLine("Verifying signature of bytes " + signedBytes.ToHex());
 			if (!_cryto.VerifySignature(attestationCertificate, signedBytes, signature))
 			{
 				throw new U2FException("Signature is invalid");
@@ -132,13 +130,13 @@ namespace U2F.Server.Impl
 				keyHandle, userPublicKey, attestationCertificate, /* initial counter value */ 0);
 			_dataStore.AddSecurityKeyData(sessionData.AccountName, securityKeyData);
 
-			//Log.info("<< processRegistrationResponse");
+			Debug.WriteLine("<< processRegistrationResponse");
 			return securityKeyData;
 		}
 
 		public IList<SignRequest> GetSignRequest(String accountName, String appId)
 		{
-			//Log.info(">> getSignRequest " + accountName);
+			Debug.WriteLine(">> getSignRequest " + accountName);
 
 			var securityKeyDataList = _dataStore.GetSecurityKeyData(accountName);
 
@@ -152,16 +150,16 @@ namespace U2F.Server.Impl
 				var sessionId = _dataStore.StoreSessionData(sessionData);
 
 				var keyHandle = securityKeyData.KeyHandle;
-				/*
-				Log.info("-- Output --");
-				Log.info("  sessionId: " + sessionId);
-				Log.info("  challenge: " + Hex.encodeHexString(challenge));
-				Log.info("  keyHandle: " + Hex.encodeHexString(keyHandle));
-				*/
+
+				Debug.WriteLine("-- Output --");
+				Debug.WriteLine("  sessionId: " + sessionId);
+				Debug.WriteLine("  challenge: " + challenge.ToHex());
+				Debug.WriteLine("  keyHandle: " + keyHandle.ToHex());
+
 				var challengeBase64 = challenge.Base64Urlencode();
 				var keyHandleBase64 = keyHandle.Base64Urlencode();
 
-				//Log.info("<< getSignRequest " + accountName);
+				Debug.WriteLine("<< getSignRequest " + accountName);
 				result.Add(new SignRequest(U2FConsts.U2F_V2, challengeBase64, appId, keyHandleBase64, sessionId));
 			}
 			return result;
@@ -169,7 +167,7 @@ namespace U2F.Server.Impl
 
 		public SecurityKeyData ProcessSignResponse(SignResponse signResponse)
 		{
-			//Log.info(">> processSignResponse");
+			Debug.WriteLine(">> processSignResponse");
 
 			var sessionId = signResponse.SessionId;
 			var browserDataBase64 = signResponse.Bd;
@@ -202,13 +200,13 @@ namespace U2F.Server.Impl
 			var browserData = browserDataBase64.Base64Urldecode().GetString();
 			var rawSignData = rawSignDataBase64.Base64Urldecode();
 
-			//Log.info("-- Input --");
-			//Log.info("  sessionId: " + sessionId);
-			//Log.info("  publicKey: " + Hex.encodeHexString(securityKeyData.GetPublicKey()));
-			//Log.info("  challenge: " + Hex.encodeHexString(sessionData.GetChallenge()));
-			//Log.info("  accountName: " + sessionData.GetAccountName());
-			//Log.info("  browserData: " + browserData);
-			//Log.info("  rawSignData: " + Hex.encodeHexString(rawSignData));
+			Debug.WriteLine("-- Input --");
+			Debug.WriteLine("  sessionId: " + sessionId);
+			Debug.WriteLine("  publicKey: " + securityKeyData.PublicKey.ToHex());
+			Debug.WriteLine("  challenge: " + sessionData.Challenge.ToHex());
+			Debug.WriteLine("  accountName: " + sessionData.AccountName);
+			Debug.WriteLine("  browserData: " + browserData);
+			Debug.WriteLine("  rawSignData: " + rawSignData.ToHex());
 
 			VerifyBrowserData(browserData, "navigator.id.getAssertion", sessionData);
 
@@ -217,10 +215,10 @@ namespace U2F.Server.Impl
 			var counter = authenticateResponse.Counter;
 			var signature = authenticateResponse.Signature;
 
-			//Log.info("-- Parsed rawSignData --");
-			//Log.info("  userPresence: " + Integer.toHexString(userPresence & 0xFF));
-			//Log.info("  counter: " + counter);
-			//Log.info("  signature: " + Hex.encodeHexString(signature));
+			Debug.WriteLine("-- Parsed rawSignData --");
+			Debug.WriteLine("  userPresence: " + (userPresence & 0xFF));
+			Debug.WriteLine("  counter: " + counter);
+			Debug.WriteLine("  signature: " + signature.ToHex());
 
 			if (userPresence != UserPresenceVerifier.USER_PRESENT_FLAG)
 			{
@@ -237,7 +235,7 @@ namespace U2F.Server.Impl
 			var signedBytes = RawMessageCodec.EncodeAuthenticateSignedBytes(appIdSha256, userPresence,
 				counter, browserDataSha256);
 
-			//Log.info("Verifying signature of bytes " + Hex.encodeHexString(signedBytes));
+			Debug.WriteLine("Verifying signature of bytes " + signedBytes.ToHex());
 			if (!_cryto.VerifySignature(_cryto.DecodePublicKey(securityKeyData.PublicKey), signedBytes,
 				signature))
 			{
@@ -246,7 +244,7 @@ namespace U2F.Server.Impl
 
 			_dataStore.UpdateSecurityKeyCounter(sessionData.AccountName, securityKeyData.PublicKey, counter);
 
-			//Log.info("<< processSignResponse");
+			Debug.WriteLine("<< processSignResponse");
 			return securityKeyData;
 		}
 
