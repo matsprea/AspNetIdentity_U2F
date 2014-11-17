@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Security.Cryptography;
-using Newtonsoft.Json.Linq;
 
 namespace U2F.Client.Impl
 {
