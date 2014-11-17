@@ -183,6 +183,10 @@ namespace U2F.Server.Impl
 			var appId = sessionData.AppId;
 			SecurityKeyData securityKeyData = null;
 
+			securityKeyData = _dataStore.GetSecurityKeyData(sessionData.AccountName).First();
+
+			//BUG: Manage multiple keys
+			/*
 			foreach (var temp in _dataStore.GetSecurityKeyData(sessionData.AccountName))
 			{
 				if (sessionData.PublicKey.SequenceEqual(temp.PublicKey))
@@ -190,7 +194,7 @@ namespace U2F.Server.Impl
 					securityKeyData = temp;
 					break;
 				}
-			}
+			}*/
 
 			if (securityKeyData == null)
 			{
