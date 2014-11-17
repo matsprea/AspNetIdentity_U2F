@@ -7,6 +7,7 @@ using Org.BouncyCastle.Asn1.X9;
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Crypto.Generators;
 using Org.BouncyCastle.Crypto.Parameters;
+using Org.BouncyCastle.Math.EC;
 using Org.BouncyCastle.Security;
 
 namespace U2F.Server.Impl
@@ -74,24 +75,19 @@ namespace U2F.Server.Impl
 			try
 			{
 				var curve = X962NamedCurves.GetByOid(_curve);
+				ECPoint point;
 				try
 				{
-					var point = curve.Curve.DecodePoint(encodedPublicKey);
+					point = curve.Curve.DecodePoint(encodedPublicKey);
 				}
 				catch (Exception e)
 				{
 					throw new U2FException("Couldn't parse user public key", e);
 				}
 
-
-				var g = new ECKeyPairGenerator("ECDSA");
-
 				var ecP = new ECDomainParameters(curve.Curve, curve.G, curve.N, curve.H);
 
-				g.Init(new ECKeyGenerationParameters(ecP, new SecureRandom()));
-
-				var aKeys = g.GenerateKeyPair();
-				return aKeys.Public;
+				return new ECPublicKeyParameters(point, ecP);
 			}
 			catch (Exception e)
 			{
