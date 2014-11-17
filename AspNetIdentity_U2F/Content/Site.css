@@ -1,0 +1,89 @@
+﻿body {
+    padding-top: 50px;
+    padding-bottom: 20px;
+}
+
+/* Set padding to keep content from hitting the edges */
+.body-content {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+/* Set width on the form input elements since they're 100% wide by default */
+input,
+select,
+textarea {
+    max-width: 280px;
+}
+
+/* styles for validation helpers */
+.field-validation-error {
+    color: #b94a48;
+}
+
+.field-validation-valid {
+    display: none;
+}
+
+input.input-validation-error {
+    border: 1px solid #b94a48;
+}
+
+input[type="checkbox"].input-validation-error {
+    border: 0 none;
+}
+
+.validation-summary-errors {
+    color: #b94a48;
+}
+
+.validation-summary-valid {
+    display: none;
+}
+
+
+.enrollmentTime {
+	font-size: 80%;
+  margin-top: 5px;
+  margin-bottom: 15px;
+}
+
+.keyHandle, .publicKey {
+	font-family: monospace;
+	word-wrap: break-word;
+	color: #9E9E9E;
+}
+
+#errormessage {
+	height: 30px;
+  width: 100%;
+  background: rgb(255, 170, 166);
+  padding: 10px 40px 0px 40px;
+}
+
+#errorbox {
+	height: 40px;
+	overflow: hidden;
+  transition: height 0.5s;
+}
+
+#errorbox.invisible {
+  height: 0px;
+}
+
+#infomessage {
+  height: 30px;
+  width: 100%;
+  background: rgb(255, 237, 145);
+  padding: 10px 40px 0px 40px;
+}
+
+#infobox {
+  height: 40px;
+  overflow: hidden;
+  transition: height 0.5s;
+}
+
+#infobox.invisible {
+  height: 0px;
+}
