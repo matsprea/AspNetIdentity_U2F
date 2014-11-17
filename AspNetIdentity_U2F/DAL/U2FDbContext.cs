@@ -1,4 +1,4 @@
-﻿using IdentitySample.U2FModels;
+﻿using AspNetIdentity_U2F.Models;
 using Microsoft.Owin;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -19,7 +19,7 @@ namespace AspNetIdentity_U2F.DAL
 			: base("U2FConnection")
 		{
 			_sessionIdGenerator = sessionIdGenerator;
-			Database.SetInitializer<U2FDbContext>(new U2FDbInitializer());
+			Database.SetInitializer(new U2FDbInitializer());
 		}
 
 		public static U2FDbContext Create(ISessionIdGenerator sessionIdGenerator)
@@ -29,7 +29,7 @@ namespace AspNetIdentity_U2F.DAL
 
 		public static U2FDbContext Create(IOwinContext context)
 		{
-			return new U2FDbContext(context.Get<ISessionIdGenerator>("a"));
+			return new U2FDbContext(context.Get<ISessionIdGenerator>("U2F"));
 		}
 
 		public DbSet<X509CertificateDb> X509Certificates { get; set; }
@@ -130,7 +130,7 @@ namespace AspNetIdentity_U2F.DAL
 		}
 	}
 
-	public class U2FDbInitializer : DropCreateDatabaseIfModelChanges<U2FDbContext>
+	public class U2FDbInitializer : DropCreateDatabaseAlways<U2FDbContext>
 	{
 	}
 

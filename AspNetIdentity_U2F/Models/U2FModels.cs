@@ -5,7 +5,7 @@ using System.Security.Cryptography.X509Certificates;
 using Newtonsoft.Json;
 using U2F.Server.Data;
 
-namespace IdentitySample.U2FModels
+namespace AspNetIdentity_U2F.Models
 {
 	public class DbStore<T> where T : class
 	{
