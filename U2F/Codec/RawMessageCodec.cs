@@ -216,7 +216,11 @@ namespace U2F.Codec
 				using (var inputStream = new BinaryReader(new MemoryStream(data)))
 				{
 					var userPresence = inputStream.ReadByte();
-					var counter = inputStream.ReadInt32();
+
+					var counterBytes = inputStream.ReadBytes(4);
+					if (BitConverter.IsLittleEndian)
+						Array.Reverse(counterBytes);
+					var counter = BitConverter.ToInt32(counterBytes, 0);
 
 					var size = inputStream.BaseStream.Length - inputStream.BaseStream.Position;
 					var signature = inputStream.ReadBytes((int) size);
@@ -252,12 +256,17 @@ namespace U2F.Codec
 		{
 			var capacity = applicationSha256.Length + 1 + 4 + challengeSha256.Length;
 
+			var counterBytes = BitConverter.GetBytes(counter);
+
+			if (BitConverter.IsLittleEndian)
+				Array.Reverse(counterBytes);
+
 			var stream = new MemoryStream(capacity);
 			using (var writer = new BinaryWriter(stream))
 			{
 				writer.Write(applicationSha256);
 				writer.Write(userPresence);
-				writer.Write(counter);
+				writer.Write(counterBytes);
 				writer.Write(challengeSha256);
 
 			}
