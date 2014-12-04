@@ -7,10 +7,10 @@ The U2F implementation is a C# porting of [google/u2f-ref-code](https://github.c
 
 Status
 ==================
-  - U2F library
-    - porting **completed** from Java
+  - U2F .Net library
+    - porting **COMPLETED** from Java to C#
   - IdentityProvider
-    - Enrollment of U2F tokens **woking**
-    - Login **NOT WORKING**
+    - Enrollment of U2F token: **WORKING** with multiple U2F tokens
+    - Login: **WORKING** only when just *ONE* U2F token is enrolled
   - Sample application
-    - UI **to be improved** 
+    - UX **to be improved** 
