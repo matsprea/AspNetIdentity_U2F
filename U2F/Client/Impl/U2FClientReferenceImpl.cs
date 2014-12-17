@@ -99,9 +99,10 @@ namespace U2F.Client.Impl
 			var rawAuthenticateResponse = RawMessageCodec.EncodeAuthenticateResponse(authenticateResponse);
 			var rawAuthenticateResponse64 = rawAuthenticateResponse.Base64Urlencode();
 			var clientDataBase64 = clientData.GetBytes().Base64Urlencode();
+			var keyHandleDataBase64 = keyHandle.Base64Urlencode();
 
 			_server.ProcessSignResponse(new SignResponse(clientDataBase64, rawAuthenticateResponse64, serverChallengeBase64,
-				sessionId, appId));
+				sessionId, appId, keyHandleDataBase64));
 		}
 	}
 }

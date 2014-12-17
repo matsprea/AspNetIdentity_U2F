@@ -163,7 +163,7 @@ namespace AspNetIdentity_U2F.Controllers
 		}
 
 		[HttpPost]
-		public async Task<ActionResult> FinishSign(string sessionId, string clientData, string signatureData)
+		public async Task<ActionResult> FinishSign(string keyHandle, string sessionId, string clientData, string signatureData)
 		{
 			var sessionData = _dataStore.GetSignSessionData(sessionId);
 
@@ -181,7 +181,7 @@ namespace AspNetIdentity_U2F.Controllers
 
 
 			var signResponse = new SignResponse(clientData, signatureData, sessionData.Challenge.Base64Urlencode(), sessionId,
-				sessionData.AppId);
+				sessionData.AppId, keyHandle);
 			SecurityKeyData securityKeyData;
 			try
 			{

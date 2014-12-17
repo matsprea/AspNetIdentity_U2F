@@ -21,13 +21,17 @@ namespace U2F.Server.Message
 		/** application id originally passed */
 		public String AppId { get; private set; }
 
-		public SignResponse(String bd, String sign, String challenge, String sessionId, String appId)
+		/** keyHandle to manage multiple keys**/
+		public String KeyHandle { get; private set; }
+
+		public SignResponse(String bd, String sign, String challenge, String sessionId, String appId, string keyHandle)
 		{
 			Bd = bd;
 			Sign = sign;
 			Challenge = challenge;
 			SessionId = sessionId;
 			AppId = appId;
+			KeyHandle = keyHandle;
 		}
 
 
@@ -72,6 +76,13 @@ namespace U2F.Server.Message
 					return false;
 			}
 			else if (!x.Sign.Equals(y.Sign))
+				return false;
+			if (x.KeyHandle == null)
+			{
+				if (y.KeyHandle != null)
+					return false;
+			}
+			else if (!x.KeyHandle.Equals(y.KeyHandle))
 				return false;
 			return true;
 		}

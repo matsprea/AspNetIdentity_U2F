@@ -172,6 +172,7 @@ namespace U2F.Server.Impl
 			var sessionId = signResponse.SessionId;
 			var browserDataBase64 = signResponse.Bd;
 			var rawSignDataBase64 = signResponse.Sign;
+			var keyHandleDataBaase64 = signResponse.KeyHandle;
 
 			var sessionData = _dataStore.GetSignSessionData(sessionId);
 
@@ -183,18 +184,8 @@ namespace U2F.Server.Impl
 			var appId = sessionData.AppId;
 			SecurityKeyData securityKeyData = null;
 
-			securityKeyData = _dataStore.GetSecurityKeyData(sessionData.AccountName).First();
-
-			//BUG: Manage multiple keys
-			/*
-			foreach (var temp in _dataStore.GetSecurityKeyData(sessionData.AccountName))
-			{
-				if (sessionData.PublicKey.SequenceEqual(temp.PublicKey))
-				{
-					securityKeyData = temp;
-					break;
-				}
-			}*/
+			securityKeyData = _dataStore.GetSecurityKeyData(sessionData.AccountName)
+				.SingleOrDefault(skd => skd.KeyHandle.Base64Urlencode() == keyHandleDataBaase64);
 
 			if (securityKeyData == null)
 			{
