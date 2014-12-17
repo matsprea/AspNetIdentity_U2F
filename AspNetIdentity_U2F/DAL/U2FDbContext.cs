@@ -130,7 +130,7 @@ namespace AspNetIdentity_U2F.DAL
 		}
 	}
 
-	public class U2FDbInitializer : DropCreateDatabaseAlways<U2FDbContext>
+	public class U2FDbInitializer : DropCreateDatabaseIfModelChanges<U2FDbContext>
 	{
 	}
 
