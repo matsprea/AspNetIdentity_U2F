@@ -11,6 +11,8 @@ Status
     - porting **COMPLETED** from Java to C#
   - IdentityProvider
     - Enrollment of U2F token: **WORKING** with multiple U2F tokens
-    - Login: **WORKING** only when just *ONE* U2F token is enrolled
+    - Login: **WORKING** multiple U2F tokens
   - Sample application
-    - UX **to be improved** 
+    - Demo and UX **to be improved** 
+  - Doc & How-to
+    - **TODO** 
