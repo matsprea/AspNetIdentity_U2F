@@ -24,7 +24,8 @@ namespace IdentitySample
 
             bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/Content/bootstrap.css",
-                      "~/Content/site.css"));
+                      "~/Content/site.css",
+                      "~/Content/u2fdemo.css"));
 
 	        bundles.Add(new ScriptBundle("~/bundles/u2fclient").Include(
 					  "~/Scripts/u2fclient.js"));

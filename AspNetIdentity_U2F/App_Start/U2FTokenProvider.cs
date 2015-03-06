@@ -6,21 +6,21 @@ namespace AspNetIdentity_U2F
 {
 	public class U2FTokenProvider : IUserTokenProvider<ApplicationUser, string>
 	{
-		public Task<string> GenerateAsync(string purpose, UserManager<ApplicationUser, string> manager, ApplicationUser user)
-		{
-			return Task.FromResult((string)null);
-		}
+        public Task<string> GenerateAsync(string purpose, UserManager<ApplicationUser, string> manager, ApplicationUser user)
+        {
+            return Task.FromResult((string)null);
+        }
 
 		public Task<bool> ValidateAsync(string purpose, string token, UserManager<ApplicationUser, string> manager, ApplicationUser user)
 		{
-			long timeStepMatched = 0;
-/*
+			var timeStepMatched = 0L;
+            /*
 			var otp = new Totp(Base32Encoder.Decode(user.GoogleAuthenticatorSecretKey));
 			bool valid = otp.VerifyTotp(token, out timeStepMatched, new VerificationWindow(2, 2));
 			*/
-			bool valid = true;
+			var valid = true;
 
-			return Task.FromResult(valid);
+            return Task.FromResult(valid);
 		}
 
 		public Task NotifyAsync(string token, UserManager<ApplicationUser, string> manager, ApplicationUser user)

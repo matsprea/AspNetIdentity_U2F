@@ -16,10 +16,21 @@ using U2F.Server.Message;
 
 namespace AspNetIdentity_U2F.Controllers
 {
-	[Authorize]
-	public class U2FController : Controller
+    [Authorize]
+    public class U2FController : Controller
 	{
-		private ApplicationUserManager _userManager;
+        private ApplicationSignInManager _signInManager;
+
+        public ApplicationSignInManager SignInManager
+        {
+            get
+            {
+                return _signInManager ?? HttpContext.GetOwinContext().Get<ApplicationSignInManager>();
+            }
+            private set { _signInManager = value; }
+        }
+
+        private ApplicationUserManager _userManager;
 
 		private ApplicationUserManager UserManager
 		{
@@ -30,8 +41,7 @@ namespace AspNetIdentity_U2F.Controllers
 		private readonly IU2FServer _u2fServer;
 		private readonly IDataStore _dataStore;
 
-
-		public U2FController()
+        public U2FController()
 		{
 			//_dataStore = new MemoryDataStore(new SessionIdGenerator());
 			_dataStore = new U2FDbContext(new SessionIdGenerator());
@@ -45,8 +55,7 @@ namespace AspNetIdentity_U2F.Controllers
 			return appId; //.GetBytes().Base64Urlencode();
 		}
 
-
-		[AcceptVerbs("POST")]
+        [AcceptVerbs("POST")]
 		public async Task<ActionResult> BeginEnroll(bool reregistration)
 		{
 			var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
@@ -95,7 +104,7 @@ namespace AspNetIdentity_U2F.Controllers
 			return Json(result);
 		}
 
-		[AcceptVerbs("POST")]
+        [AcceptVerbs("POST")]
 		public async Task<ActionResult> FinishEnroll(string registrationData, string clientData, string sessionId)
 		{
 			// Simple XSRF protection. We don't want users to be tricked into
@@ -134,13 +143,13 @@ namespace AspNetIdentity_U2F.Controllers
 			return Json(response);
 		}
 
-
-		[AcceptVerbs("POST")]
+        [AllowAnonymous]
+        [AcceptVerbs("POST")]
 		public async Task<ActionResult> BeginSign()
 		{
-			var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
+            var user = await UserManager.FindByIdAsync(await SignInManager.GetVerifiedUserIdAsync());
 
-			var signRequests = new List<SignRequest>();
+            var signRequests = new List<SignRequest>();
 			try
 			{
 				signRequests.AddRange(_u2fServer.GetSignRequest(user.Id, AppId()));
@@ -162,26 +171,26 @@ namespace AspNetIdentity_U2F.Controllers
 			return Json(signServerData);
 		}
 
-		[HttpPost]
+        [AllowAnonymous]
+        [HttpPost]
 		public async Task<ActionResult> FinishSign(string keyHandle, string sessionId, string clientData, string signatureData)
 		{
 			var sessionData = _dataStore.GetSignSessionData(sessionId);
 
-			// Simple XSRF protection. We don't want users to be tricked into
-			// submitting other people's enrollment data. Here we're just checking 
-			// that it's the same user that also started the enrollment - you might
-			// want to do something more sophisticated.
-			var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
+            // Simple XSRF protection. We don't want users to be tricked into
+            // submitting other people's enrollment data. Here we're just checking 
+            // that it's the same user that also started the enrollment - you might
+            // want to do something more sophisticated.
+            var user = await UserManager.FindByIdAsync(await SignInManager.GetVerifiedUserIdAsync());
 
-			var expectedUser = sessionData.AccountName;
+            var expectedUser = sessionData.AccountName;
 			if (user.Id != expectedUser)
 			{
 				return null;
 			}
 
-
-			var signResponse = new SignResponse(clientData, signatureData, sessionData.Challenge.Base64Urlencode(), sessionId,
-				sessionData.AppId, keyHandle);
+			var signResponse = new SignResponse(clientData, signatureData, sessionData.Challenge.Base64Urlencode(), sessionId, 
+                sessionData.AppId, keyHandle);
 			SecurityKeyData securityKeyData;
 			try
 			{
@@ -192,7 +201,9 @@ namespace AspNetIdentity_U2F.Controllers
 				return null;
 			}
 
-			var response = new
+            await SignInManager.TwoFactorSignInAsync("U2FTokenProvider", string.Empty, isPersistent: false, rememberBrowser: false);
+            
+            var response = new
 			{
 				enrollment_time = securityKeyData.EnrollmentTime,
 				key_handle = securityKeyData.KeyHandle.ToHex(),
@@ -203,7 +214,8 @@ namespace AspNetIdentity_U2F.Controllers
 			return Json(response);
 		}
 
-		[AcceptVerbs("POST")]
+        [AllowAnonymous]
+        [AcceptVerbs("POST")]
 		public async Task<ActionResult> GetTokens()
 		{
 			var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
@@ -221,7 +233,7 @@ namespace AspNetIdentity_U2F.Controllers
 			return Json(resultList);
 		}
 
-		[AcceptVerbs("POST")]
+        [AcceptVerbs("POST")]
 		public async Task<ActionResult> RemoveToken(string public_key)
 		{
 			var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());

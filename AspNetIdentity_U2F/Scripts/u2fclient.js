@@ -78,7 +78,13 @@ function highlightTokenCardOnPage(token) {
     var cardContent = $("#" + token.public_key).find(".cardContent");
 
     cardContent.addClass("highlight");
-    window.setTimeout(function () { cardContent.removeClass("highlight", 2000); }, 500);
+
+    $("#RedirectUrl").show();
+
+    window.setTimeout(function () {
+        cardContent.removeClass("highlight", 2000);
+        window.location.href = $("#RedirectUrl").prop("href");
+    }, 500);
 }
 
 
@@ -161,10 +167,10 @@ function onTokenEnrollSuccess(finishEnrollData) {
     hideMessage();
     console.log(finishEnrollData);
     $.post('/U2F/FinishEnroll', finishEnrollData, null, 'json')
-        .done(addTokenInfoToPage)
-        .fail(function(xhr, status) {
-            showError(status);
-        });
+     .done(addTokenInfoToPage)
+     .fail(function (xhr, status) {
+         showError(status);
+     });
 }
 
 function onTokenSignSuccess(responseData) {
@@ -202,32 +208,3 @@ function onError(code, enrolling) {
             break;
     }
 }
-
-function getIframePort(callback) {
-    // Create the iframe
-    var iframeOrigin = 'chrome-extension://pfboblefjcgdjicmnffhdgionmgcdmne';
-    var iframe = document.createElement('iframe');
-    iframe.src = iframeOrigin + '/u2f-comms.html';
-    iframe.setAttribute('style', 'display:none');
-    document.body.appendChild(iframe);
-
-    // Prepare a channel
-    var channel = new MessageChannel();
-    var ready = function (message) {
-        // When the iframe is ready to receive U2F messages,
-        // it will send the string 'ready'
-        if (message.data == 'ready') {
-            channel.port1.removeEventListener('message', ready);
-            callback(channel.port1);
-        } else {
-            console.error('First event on iframe port was not "ready"');
-        }
-    };
-    channel.port1.addEventListener('message', ready);
-    channel.port1.start();
-
-    iframe.addEventListener('load', function () {
-        // Deliver the port to the iframe and initialize
-        iframe.contentWindow.postMessage('init', iframeOrigin, [channel.port2]);
-    });
-};

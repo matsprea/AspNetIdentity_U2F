@@ -11,27 +11,53 @@
     @Html.Hidden("provider", @Model.Provider)
     <h4>@ViewBag.Status</h4>
     <hr />
-    <div class="form-group">
-        @Html.LabelFor(m => m.Code, new { @class = "col-md-2 control-label" })
-        <div class="col-md-10">
-            @Html.TextBoxFor(m => m.Code, new { @class = "form-control" })
-        </div>
-    </div>
-    <div class="form-group">
-        <div class="col-md-offset-2 col-md-10">
-            <div class="checkbox">
-                @Html.CheckBoxFor(m => m.RememberBrowser)
-                @Html.LabelFor(m => m.RememberBrowser)
+    if (Model.Provider != "U2FTokenProvider")
+    {
+        <div class="form-group">
+            @Html.LabelFor(m => m.Code, new { @class = "col-md-2 control-label" })
+            <div class="col-md-10">
+                @Html.TextBoxFor(m => m.Code, new { @class = "form-control" })
             </div>
         </div>
-    </div>
-    <div class="form-group">
-        <div class="col-md-offset-2 col-md-10">
-            <input type="submit" class="btn btn-default" value="Submit" />
+    }
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <div class="checkbox">
+                    @Html.CheckBoxFor(m => m.RememberBrowser)
+                    @Html.LabelFor(m => m.RememberBrowser)
+                </div>
+            </div>
         </div>
-    </div>
+    if (Model.Provider != "U2FTokenProvider")
+    {
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" class="btn btn-default" value="Submit" />
+            </div>
+        </div>
+    } else
+    {
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                @Html.ActionLink("Click here", "Index", "Home", null, new { @class = "btn btn-default", Id = "RedirectUrl" })
+            </div>
+        </div>
+    }
 }
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
+
+    @if (Model.Provider == "U2FTokenProvider")
+    {
+        <script type="text/javascript" src="chrome-extension://pfboblefjcgdjicmnffhdgionmgcdmne/u2f-api.js" async></script>
+        @Scripts.Render("~/bundles/u2fclient");
+
+        <script>
+            $(function () {
+                $("#RedirectUrl").hide();
+                sendBeginSignRequest();
+        });
+        </script>
+    }
 }

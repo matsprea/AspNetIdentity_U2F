@@ -103,6 +103,11 @@ namespace IdentitySample.Controllers
             {
                 ViewBag.Status = "For DEMO purposes the current " + provider + " code is: " + await UserManager.GenerateTwoFactorTokenAsync(user.Id, provider);
             }
+
+            if (provider == "U2FTokenProvider")
+            {
+                ViewBag.Status = "Use your U2F Token.";
+            }
             return View(new VerifyCodeViewModel { Provider = provider, ReturnUrl = returnUrl });
         }
 
@@ -119,6 +124,7 @@ namespace IdentitySample.Controllers
             }
 
             var result = await SignInManager.TwoFactorSignInAsync(model.Provider, model.Code, isPersistent: false, rememberBrowser: model.RememberBrowser);
+
             switch (result)
             {
                 case SignInStatus.Success:
