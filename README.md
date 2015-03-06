@@ -13,6 +13,6 @@ Status
     - Enrollment of U2F token: **WORKING** with multiple U2F tokens
     - Login: **WORKING** multiple U2F tokens
   - Sample application
-    - Demo and UX **to be improved** 
+    - Demo Identity application with U2F is **WORKING**
   - Doc & How-to
     - **TODO** 
